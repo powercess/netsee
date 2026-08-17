@@ -3,7 +3,11 @@
 // attribution layer.
 package client
 
-import "time"
+import (
+	"time"
+
+	"netsee/internal/proto"
+)
 
 // Note is a single honest-context remark attached to a result.
 type Note struct {
@@ -59,15 +63,33 @@ type Info struct {
 
 // Observation is one probe-side fact about a connection.
 type Observation struct {
-	Kind      string `json:"kind"` // http | tcp | udp | tls
-	SrcIP     string `json:"src_ip"`
-	SrcPort   int    `json:"src_port"`
-	DstPort   int    `json:"dst_port"`
-	JA3       string `json:"ja3,omitempty"`
-	JA4       string `json:"ja4,omitempty"`
-	SNI       string `json:"sni,omitempty"`
-	MSS       uint32 `json:"mss,omitempty"`
+	Kind    string `json:"kind"` // http | tcp | udp | tls
+	SrcIP   string `json:"src_ip"`
+	SrcPort int    `json:"src_port"`
+	DstPort int    `json:"dst_port"`
+
+	// TCP fingerprint (probe TCP_INFO).
+	MSS    uint32 `json:"mss,omitempty"`
+	WScale bool   `json:"wscale,omitempty"`
+	SACK   bool   `json:"sack,omitempty"`
+	TS     bool   `json:"ts,omitempty"`
+	ECN    bool   `json:"ecn,omitempty"`
+	RTTUs  uint32 `json:"rtt_us,omitempty"`
+
+	// TLS fingerprint.
+	JA3 string `json:"ja3,omitempty"`
+	JA4 string `json:"ja4,omitempty"`
+	SNI string `json:"sni,omitempty"`
+
+	// UDP reply source semantics.
 	ReplyFrom string `json:"reply_from,omitempty"`
+
+	// HTTP view (as seen by the probe).
+	HTTPMethod  string         `json:"http_method,omitempty"`
+	HTTPPath    string         `json:"http_path,omitempty"`
+	HTTPHeaders []proto.Header `json:"http_headers,omitempty"`
+	// HTTPTraces are transparent-proxy injected header traces (XFF/Via…).
+	HTTPTraces []string `json:"http_traces,omitempty"`
 }
 
 // PortCheck is one client-side connectivity attempt with the probe-side

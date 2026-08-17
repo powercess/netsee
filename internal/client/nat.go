@@ -104,13 +104,13 @@ func (s *Session) RunNAT(ctx context.Context, timeout time.Duration) (*NATResult
 	)
 
 	// Port filter: reply from a different port.
-	_, _, rf3, r3, err := send(s.info.UDPPort, "nat", nat)
+	ip3, p3, rf3, r3, err := send(s.info.UDPPort, "nat", nat)
 	if err != nil {
 		return nil, err
 	}
 	res.NATReplyReceived = r3
 	res.Facts = append(res.Facts,
-		NATFact{Kind: "filter", Detail: "nat → udp 端口，回包来自异端口", ReplyFrom: rf3, Received: r3},
+		NATFact{Kind: "filter", Detail: "nat → udp 端口，回包来自异端口", ObservedSrc: net.JoinHostPort(ip3, strconv.Itoa(p3)), ReplyFrom: rf3, Received: r3},
 	)
 
 	// IP filter (only when the probe has a second IP).

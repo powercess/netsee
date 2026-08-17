@@ -123,26 +123,26 @@ TCP 通但 UDP 不通时，先排除"TUN 不转发 UDP"再下"端口封锁"结�
 ## 报告
 
 ### FR-REPORT-001：文本报告三层视角 + 诚实上下文
-状态：Accepted
+状态：Implemented
 验收：ACC-P3-001
 以出口/路径中间层/终点三层视角组织，概览区含固定诚实上下文行，每项标注观测点。
 
 ### FR-REPORT-002：--json 完整结构化输出
-状态：Accepted
+状态：Implemented
 验收：ACC-P3-002
 JSON 输出与文本报告字段一致，可机器消费。
 
 ### FR-REPORT-003：原始事实先于判定标签
-状态：Accepted
+状态：Implemented
 验收：ACC-P3-003
 先列观测到的原始事实（如 src ip:port 序列），再给判定标签。
 
 ### FR-REPORT-004：判定标注置信度与前提
-状态：Accepted
+状态：Implemented
 验收：ACC-P3-003
 NAT 分类等结论标注前提（如"单 IP 无法区分对称/端口受限映射"）。
 
 ### FR-REPORT-005：路径归因标注
-状态：Accepted
+状态：Implemented
 验收：ACC-P3-001
 TUN/代理出口场景在报告中明确标注归因。

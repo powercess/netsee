@@ -122,6 +122,27 @@ func (c Config) Run(ctx context.Context) (*Result, error) {
 	return res, nil
 }
 
+// proxyTraceHeaders are the HTTP headers most commonly injected by
+// transparent proxies / reverse proxies on the path.
+var proxyTraceHeaders = []string{
+	"X-Forwarded-For", "X-Forwarded-Proto", "X-Forwarded-Host",
+	"Via", "Forwarded", "Proxy-Connection", "X-Real-Ip", "True-Client-Ip",
+}
+
+// transparentProxyTraces returns the injected-header traces found in the
+// headers the probe received (path middlebox evidence).
+func transparentProxyTraces(headers []proto.Header) []string {
+	var traces []string
+	for _, h := range headers {
+		for _, t := range proxyTraceHeaders {
+			if strings.EqualFold(h.Key, t) {
+				traces = append(traces, h.Key+": "+h.Value)
+			}
+		}
+	}
+	return traces
+}
+
 // buildProbeResult converts probe observations into the structured view.
 func buildProbeResult(sess *Session, obs []proto.Obs, outcomes map[int]bool) ProbeResult {
 	pr := ProbeResult{
@@ -136,14 +157,25 @@ func buildProbeResult(sess *Session, obs []proto.Obs, outcomes map[int]bool) Pro
 			continue
 		}
 		ob := Observation{Kind: string(o.Kind), SrcIP: o.SrcIP, SrcPort: o.SrcPort, DstPort: o.DstPort}
+		if o.TCPInfo != nil {
+			ob.MSS = o.TCPInfo.MSS
+			ob.WScale = o.TCPInfo.WScale
+			ob.SACK = o.TCPInfo.SACK
+			ob.TS = o.TCPInfo.TS
+			ob.ECN = o.TCPInfo.ECN
+			ob.RTTUs = o.TCPInfo.RTTUs
+		}
 		if o.TLS != nil {
 			ob.JA3, ob.JA4, ob.SNI = o.TLS.JA3, o.TLS.JA4, o.TLS.SNI
 		}
-		if o.TCPInfo != nil {
-			ob.MSS = o.TCPInfo.MSS
-		}
 		if o.UDP != nil {
 			ob.ReplyFrom = o.UDP.ReplyFrom
+		}
+		if o.HTTP != nil {
+			ob.HTTPMethod = o.HTTP.Method
+			ob.HTTPPath = o.HTTP.Path
+			ob.HTTPHeaders = o.HTTP.Headers
+			ob.HTTPTraces = transparentProxyTraces(o.HTTP.Headers)
 		}
 		pr.Observations = append(pr.Observations, ob)
 		exitIPs[o.SrcIP] = true
