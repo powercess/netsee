@@ -73,6 +73,8 @@ references:
 
 ## P2 客户端（本地采集）
 
+> 状态：已完成（2026-08-17）。ACC-P2-001..009 本地回环通过，验证记录见 [validation/README.md](validation/README.md)。真实 NAT/TUN 场景与直连对比归 P4 VPS 验证。
+
 目标：客户端零配置采集本机事实，执行判定测试，正确归因 TUN/代理路径。
 
 交付物：
@@ -176,3 +178,4 @@ references:
 | 2026-08-16 | 需求方案冻结（`requirements/README.md`）；P0 启动 |
 | 2026-08-16 | P0 治理基线推送 `powercess/netsee`（private）；分支保护因 Free 限制降级为书面规则 |
 | 2026-08-17 | P1 探针实现完成：HTTP/TCP/UDP/TLS 观测、会话协议、JA3/JA4（官方固定向量 + 跨分片）、本地 e2e 全绿 |
+| 2026-08-17 | P2 客户端实现完成：本地采集、NAT/PMTU/DNS/信誉测量、TUN/fake-ip 归因、--direct 机制、cmd/netsee CLI；本地回环全链路验证通过 |

@@ -31,6 +31,7 @@ type Config struct {
 	TTL         time.Duration
 	MaxSessions int
 	MaxUDP      int
+	MaxUDPPMTU  int
 	ReadTimeout time.Duration
 }
 
@@ -48,6 +49,9 @@ func applyDefaults(cfg Config) Config {
 	}
 	if cfg.MaxUDP == 0 {
 		cfg.MaxUDP = 2048
+	}
+	if cfg.MaxUDPPMTU == 0 {
+		cfg.MaxUDPPMTU = 9000
 	}
 	if cfg.ReadTimeout == 0 {
 		cfg.ReadTimeout = 10 * time.Second
@@ -161,10 +165,11 @@ func (s *Server) Start() error {
 		},
 	}
 
-	s.wg.Add(4 + len(s.extraLn))
+	s.wg.Add(5 + len(s.extraLn))
 	go s.serveHTTP()
 	go s.serveTLS()
 	go s.serveUDP()
+	go s.serveUDPNat()
 	for _, ln := range s.extraLn {
 		go s.acceptExtra(ln)
 	}
@@ -404,6 +409,7 @@ func (s *Server) buildInfo() *proto.Info {
 		ExtraPorts:      extra,
 		SecondIP:        s.cfg.SecondIP != "",
 		SecondIPAddr:    s.cfg.SecondIP,
+		MaxUDPPMTU:      s.cfg.MaxUDPPMTU,
 	}
 	return info
 }

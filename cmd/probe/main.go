@@ -29,6 +29,7 @@ func main() {
 	flag.DurationVar(&cfg.TTL, "ttl", 5*time.Minute, "session registry TTL")
 	flag.IntVar(&cfg.MaxSessions, "max-sessions", 10000, "max concurrent sessions")
 	flag.IntVar(&cfg.MaxUDP, "max-udp", 2048, "max UDP payload echoed (bytes)")
+	flag.IntVar(&cfg.MaxUDPPMTU, "max-udp-pmtu", 9000, "max UDP payload echoed for pmtu kind (bytes)")
 	flag.DurationVar(&cfg.ReadTimeout, "read-timeout", 10*time.Second, "per-connection read timeout")
 	flag.Parse()
 
