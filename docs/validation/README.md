@@ -25,3 +25,4 @@ references: []
 |---|---|---|---|---|
 | 2026-08-17 | ACC-P1-001..007 | Linux 7.1.8-zen amd64；本地回环 127.0.0.1 | `go test -race ./...` 全绿；二进制冒烟：`/api/info` 自发现一致、HTTP echo 拉回完整请求头 + TCP_INFO（mss=32768, wscale/sack/ts）、未知/过期会话 404、UDP echo 同端口回包、NAT 异端口回包（源端口= nat 端口）、真实 openssl ClientHello → JA3/JA4（SNI 前缀会话提取） | P1 提交（PR #4）；`second-ip` 异 IP 回包路径待 P4 VPS 验证 |
 | 2026-08-17 | ACC-P2-001..009 | Linux 7.1.8-zen amd64；本地回环 127.0.0.1；无 root | `go test -race ./...` 全绿；`netsee -probe http://127.0.0.1:18080` 实跑：本地采集（默认路由 ens33/lo、MTU 1500）、NAT 直连标签 + 原始事实序列、PMTU 9028（达探针上限）、DNS 系统 vs DoH 一致（各 4 条）、四端口连通性与探针回报全部一致、信誉不可用降级、`--direct` 回环降级提示、诚实上下文行 | 本次 P2 提交；真实 NAT/TUN 场景、直连对比、VPS 冒烟归 P4 |
+| 2026-08-17 | ACC-P3-001..003 | Linux 7.1.8-zen amd64；本地回环 | `internal/report` 文本+JSON 同一结构（字段一致性单测）、诚实上下文固定行、三层视角 + 每项观测点标注、NAT 原始事实先于判定标签；实跑报告：概览/本机/NAT/总表/TCP/TLS/HTTP/端口/MTU/DNS/信誉/备注 12 段齐全 | 本次 P3 提交；直连对比表随 P4 真实 `--direct` 环境验证 |
