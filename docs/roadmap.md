@@ -47,6 +47,8 @@ references:
 
 ## P1 探针（观测点）
 
+> 状态：已完成（2026-08-17）。ACC-P1-001..007 本地回环通过；验证记录见 [validation/README.md](validation/README.md)。VPS 冒烟与 second-ip 异 IP 回包验证归 P4。
+
 目标：探针可运行在公网 VPS，对每个会话回报"对方视角"原始事实；协议先行并在本地回环端到端走通。
 
 交付物：
@@ -173,3 +175,4 @@ references:
 |---|---|
 | 2026-08-16 | 需求方案冻结（`requirements/README.md`）；P0 启动 |
 | 2026-08-16 | P0 治理基线推送 `powercess/netsee`（private）；分支保护因 Free 限制降级为书面规则 |
+| 2026-08-17 | P1 探针实现完成：HTTP/TCP/UDP/TLS 观测、会话协议、JA3/JA4（官方固定向量 + 跨分片）、本地 e2e 全绿 |
