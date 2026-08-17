@@ -35,7 +35,7 @@ references:
 - 文档约束套件：`CONTRIBUTING.md`、`SECURITY.md`、`CODE_OF_CONDUCT.md`、`AGENTS.md`、Issue/PR 模板
 - `docs/` 事实源结构（`docs/README.md` 定义状态机与稳定 ID）
 - `scripts/check-docs.sh` 文档门禁 + `.github/workflows/ci.yml`
-- 私有远端 `powercess/netsee`，`main`/`dev` 分支保护
+- 私有远端 `powercess/netsee`；`main`/`dev` 分支保护（GitHub Free 限制无法在 private 仓库启用，见 RISK-REPO-001）
 
 验收：`ACC-P0-001` 至 `ACC-P0-003`。
 
@@ -43,9 +43,11 @@ references:
 
 依赖：无。
 
-出口条件：远端可推、门禁脚本通过、分支保护生效。
+出口条件：远端可推、门禁脚本通过；分支保护因 GitHub Free 限制暂以书面规则执行（RISK-REPO-001）。
 
 ## P1 探针（观测点）
+
+> 状态：已完成（2026-08-17）。ACC-P1-001..007 本地回环通过；验证记录见 [validation/README.md](validation/README.md)。VPS 冒烟与 second-ip 异 IP 回包验证归 P4。
 
 目标：探针可运行在公网 VPS，对每个会话回报"对方视角"原始事实；协议先行并在本地回环端到端走通。
 
@@ -71,6 +73,8 @@ references:
 
 ## P2 客户端（本地采集）
 
+> 状态：已完成（2026-08-17）。ACC-P2-001..009 本地回环通过，验证记录见 [validation/README.md](validation/README.md)。真实 NAT/TUN 场景与直连对比归 P4 VPS 验证。
+
 目标：客户端零配置采集本机事实，执行判定测试，正确归因 TUN/代理路径。
 
 交付物：
@@ -95,6 +99,8 @@ references:
 
 ## P3 报告
 
+> 状态：已完成（2026-08-17）。文本与 JSON 报告同一结构（ACC-P3-002），诚实上下文行与三层视角标注齐全（ACC-P3-001），判定事实先于标签（ACC-P3-003）；直连对比渲染随 P4 真实环境验证。
+
 目标：三层视角（出口 / 路径中间层 / 终点）结构化呈现，内置诚实上下文，支持对比。
 
 交付物：
@@ -115,6 +121,8 @@ references:
 
 ## P4 端到端与验证
 
+> 状态：已完成（2026-08-17）。e2e-local.sh 断言通过（ACC-P4-001/003）、跨平台构建矩阵进 CI、e2e 标签真实网络测试、**VPS 冒烟通过（ACC-P4-002）**：真实 HK VPS 全流程验证（对称 NAT、PMTU 1500、TLS 嗅探、端口连通性、DNS 诚实降级、IP 信誉），并修正 NAT 判定逻辑反向 bug。剩余 Unverified：`second-ip` 异 IP 回包（需第二 IP）与 `--direct` 真实直连对比（需 TUN 环境）——归 P5/V2。
+
 目标：全链路可复现验证，包括真实 VPS 冒烟与指纹解析的确定性。
 
 交付物：
@@ -133,6 +141,8 @@ references:
 出口条件：本地与公网两条路径都有可追踪验证记录。
 
 ## P5 加固与发布
+
+> 状态：已完成（2026-08-17）。畸形载荷 fuzz（发现并修复 2 处越界 panic）、并发压力、零落盘与最小监听面子进程验证（ACC-P5-001/003/004）、`-version` 标志与 CHANGELOG；v0.1.0 发布提升 PR 与签名 tag 随后。
 
 目标：拒绝路径与资源边界完备，产出 v0.1.0。
 
@@ -165,9 +175,17 @@ references:
 | RISK-NAT-001 | 单 IP 探针 NAT 分类不完整 | 报告显式标注前提；`-second-ip` 预留 |
 | RISK-TUN-001 | TUN 归因依赖代理栈指纹比对，未知代理不匹配 | 未匹配只标"代理出口"不点名 |
 | RISK-TOOLCHAIN-001 | 开发机缺 Go 工具链 | P1 前置安装（`pacman -S go`） |
+| RISK-REPO-001 | GitHub Free 套餐 private 仓库不支持分支保护（required reviews/checks 需 Pro） | 书面规则（CONTRIBUTING）自律执行；升级 Pro 或转公开后启用强制保护 |
 
 ## 里程碑记录
 
 | 日期 | 事件 |
 |---|---|
 | 2026-08-16 | 需求方案冻结（`requirements/README.md`）；P0 启动 |
+| 2026-08-16 | P0 治理基线推送 `powercess/netsee`（private）；分支保护因 Free 限制降级为书面规则 |
+| 2026-08-17 | P1 探针实现完成：HTTP/TCP/UDP/TLS 观测、会话协议、JA3/JA4（官方固定向量 + 跨分片）、本地 e2e 全绿 |
+| 2026-08-17 | P2 客户端实现完成：本地采集、NAT/PMTU/DNS/信誉测量、TUN/fake-ip 归因、--direct 机制、cmd/netsee CLI；本地回环全链路验证通过 |
+| 2026-08-17 | P3 报告实现完成：internal/report 三层视角结构（文本+JSON 同构）、诚实上下文行、事实先于判定、直连对比渲染；客户端观测扩展完整 TCP 指纹与 HTTP 头 |
+| 2026-08-17 | P4 本地端到端：e2e-local.sh 断言通过、跨平台构建矩阵进 CI、e2e 标签真实网络测试、不可达快速失败；VPS 冒烟脚本就绪待部署 |
+| 2026-08-17 | P4 VPS 冒烟通过（HK 222.167.130.199）：真实 NAT 判定、TLS 嗅探、PMTU、端口连通性、DNS 降级、IP 信誉全链路验证；修正 NAT 判定逻辑反向 bug；探针静态编译（CGO_ENABLED=0）经验入运维文档 |
+| 2026-08-17 | P5 加固：fuzz 修复 2 处越界 panic、并发压力、零落盘/最小监听面验证、-version 与 CHANGELOG；v0.1.0 发布 |

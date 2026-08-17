@@ -18,7 +18,9 @@ references:
 ## 构建与部署
 
 ```bash
-GOOS=linux GOARCH=amd64 go build -o netsee-probe ./cmd/probe
+# CGO_ENABLED=0：纯静态单二进制，避免目标机 glibc 版本不匹配
+#（实测：Arch 构建的动态二进制在 Debian 11 上因 GLIBC_2.34 缺失无法运行）
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o netsee-probe ./cmd/probe
 ```
 
 - 上传二进制至 VPS；TLS 证书内存自签，无证书文件需管理。
