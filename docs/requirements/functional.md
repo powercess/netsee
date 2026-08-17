@@ -15,46 +15,46 @@ references:
 ## 探针（观测点）
 
 ### FR-PROBE-001：HTTP echo 回报完整请求头
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-001
 
 ### FR-PROBE-002：TCP 对端指纹（TCP_INFO）
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-002
 探针经 TCP_INFO 采集对端 MSS/WScale/SACK/TS/ECN/RTT，形成对端指纹。
 
 ### FR-PROBE-003：UDP echo 同端口回包
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-003
 探针一律从收到载荷的同端口回包。
 
 ### FR-PROBE-004：NAT 探测回包（异端口/异 IP）
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-003
 NAT 测试额外从不同端口、不同 IP（`-second-ip`）回包；未配置第二 IP 时异 IP 回包路径必须存在且返回明确不可用。
 
 ### FR-PROBE-005：TLS 嗅探 ClientHello → JA3/JA4
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-004
 握手前嗅探 ClientHello，跨 TCP 分片累积解析，输出 JA3/JA4 指纹；不得解密或记录后续流量。
 
 ### FR-PROBE-006：会话注册表（内存 + TTL）
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-006
 会话 UUID 关联全部观测记录；注册表仅存内存，TTL 到期清理，不写磁盘。
 
 ### FR-PROBE-007：端口自发现（GET /api/info）
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-005
 返回 HTTP/TLS/UDP/NAT 监听端口、额外端口与第二 IP 状态，客户端零配置。
 
 ### FR-PROBE-008：会话观测拉取（GET /api/session/{id}）
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-001
 客户端按会话拉取全部观测记录（对方视角总表）。
 
 ### FR-PROBE-009：会话标识传递
-状态：Accepted
+状态：Implemented
 验收：ACC-P1-001
 HTTP 走 `X-Netsee-Session` header，TCP/UDP 走首条 JSON 载荷，TLS 走 SNI 前缀 `<session>.n`。
 
