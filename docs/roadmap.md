@@ -35,7 +35,7 @@ references:
 - 文档约束套件：`CONTRIBUTING.md`、`SECURITY.md`、`CODE_OF_CONDUCT.md`、`AGENTS.md`、Issue/PR 模板
 - `docs/` 事实源结构（`docs/README.md` 定义状态机与稳定 ID）
 - `scripts/check-docs.sh` 文档门禁 + `.github/workflows/ci.yml`
-- 私有远端 `powercess/netsee`，`main`/`dev` 分支保护
+- 私有远端 `powercess/netsee`；`main`/`dev` 分支保护（GitHub Free 限制无法在 private 仓库启用，见 RISK-REPO-001）
 
 验收：`ACC-P0-001` 至 `ACC-P0-003`。
 
@@ -43,7 +43,7 @@ references:
 
 依赖：无。
 
-出口条件：远端可推、门禁脚本通过、分支保护生效。
+出口条件：远端可推、门禁脚本通过；分支保护因 GitHub Free 限制暂以书面规则执行（RISK-REPO-001）。
 
 ## P1 探针（观测点）
 
@@ -165,9 +165,11 @@ references:
 | RISK-NAT-001 | 单 IP 探针 NAT 分类不完整 | 报告显式标注前提；`-second-ip` 预留 |
 | RISK-TUN-001 | TUN 归因依赖代理栈指纹比对，未知代理不匹配 | 未匹配只标"代理出口"不点名 |
 | RISK-TOOLCHAIN-001 | 开发机缺 Go 工具链 | P1 前置安装（`pacman -S go`） |
+| RISK-REPO-001 | GitHub Free 套餐 private 仓库不支持分支保护（required reviews/checks 需 Pro） | 书面规则（CONTRIBUTING）自律执行；升级 Pro 或转公开后启用强制保护 |
 
 ## 里程碑记录
 
 | 日期 | 事件 |
 |---|---|
 | 2026-08-16 | 需求方案冻结（`requirements/README.md`）；P0 启动 |
+| 2026-08-16 | P0 治理基线推送 `powercess/netsee`（private）；分支保护因 Free 限制降级为书面规则 |
