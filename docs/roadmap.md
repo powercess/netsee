@@ -121,7 +121,7 @@ references:
 
 ## P4 端到端与验证
 
-> 状态：本地部分已完成（2026-08-17）：e2e-local.sh 全流程断言通过（ACC-P4-001/003）、跨平台构建矩阵进 CI（NFR-BUILD-001）、e2e 标签真实网络测试通过。VPS 冒烟（ACC-P4-002）与全部 Unverified 项待探针部署后执行——脚本为 `scripts/vps-smoke.sh`。
+> 状态：已完成（2026-08-17）。e2e-local.sh 断言通过（ACC-P4-001/003）、跨平台构建矩阵进 CI、e2e 标签真实网络测试、**VPS 冒烟通过（ACC-P4-002）**：真实 HK VPS 全流程验证（对称 NAT、PMTU 1500、TLS 嗅探、端口连通性、DNS 诚实降级、IP 信誉），并修正 NAT 判定逻辑反向 bug。剩余 Unverified：`second-ip` 异 IP 回包（需第二 IP）与 `--direct` 真实直连对比（需 TUN 环境）——归 P5/V2。
 
 目标：全链路可复现验证，包括真实 VPS 冒烟与指纹解析的确定性。
 
@@ -185,3 +185,4 @@ references:
 | 2026-08-17 | P2 客户端实现完成：本地采集、NAT/PMTU/DNS/信誉测量、TUN/fake-ip 归因、--direct 机制、cmd/netsee CLI；本地回环全链路验证通过 |
 | 2026-08-17 | P3 报告实现完成：internal/report 三层视角结构（文本+JSON 同构）、诚实上下文行、事实先于判定、直连对比渲染；客户端观测扩展完整 TCP 指纹与 HTTP 头 |
 | 2026-08-17 | P4 本地端到端：e2e-local.sh 断言通过、跨平台构建矩阵进 CI、e2e 标签真实网络测试、不可达快速失败；VPS 冒烟脚本就绪待部署 |
+| 2026-08-17 | P4 VPS 冒烟通过（HK 222.167.130.199）：真实 NAT 判定、TLS 嗅探、PMTU、端口连通性、DNS 降级、IP 信誉全链路验证；修正 NAT 判定逻辑反向 bug；探针静态编译（CGO_ENABLED=0）经验入运维文档 |

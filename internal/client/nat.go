@@ -128,23 +128,29 @@ func (s *Session) RunNAT(ctx context.Context, timeout time.Duration) (*NATResult
 	res.Confidence = "中"
 	res.Premise = "单 IP 探针无法区分全锥 vs 受限锥、对称 vs 端口依赖映射（需第二 IP 做完整 RFC 5780 分类）"
 
-	// Judgment: raw facts first, then label.
-	observedIP := ip1
-	sameSocketPort := p1 == p2
+	// Judgment: raw facts first, then label (ACC-P3-003).
+	res.Label, res.Confidence, res.Premise = natJudgment(localIP, ip1, p1, p2, r3, s.info.SecondIP, r4)
+	return res, nil
+}
+
+// natJudgment derives the honest NAT label from raw facts. p1/p2 are the
+// probe-observed source ports for two destinations (udp port, nat port)
+// from the same socket:
+//   - p1 == p2: the NAT keeps one mapping across destinations → cone-type
+//   - p1 != p2: the mapping changes per destination → symmetric
+func natJudgment(localIP, observedIP string, p1, p2 int, r3, secondIP, r4 bool) (label, confidence, premise string) {
+	premise = "单 IP 探针无法区分全锥 vs 受限锥、对称 vs 端口依赖映射（需第二 IP 做完整 RFC 5780 分类）"
 	switch {
 	case observedIP == localIP:
-		res.Label = "直连（无 NAT 翻译）"
-		res.Confidence = "高（探针观测源 IP 与本机一致）"
-		res.Premise = ""
-	case sameSocketPort:
-		res.Label = "对称式映射"
+		return "直连（无 NAT 翻译）", "高（探针观测源 IP 与本机一致）", ""
+	case p1 != p2:
+		return "对称式映射", "中", premise
 	case r3:
-		res.Label = "锥形（端口不过滤）"
-		if s.info.SecondIP && !r4 {
-			res.Label = "地址受限锥形"
+		if secondIP && !r4 {
+			return "地址受限锥形", "中", premise
 		}
+		return "锥形（端口不过滤）", "中", premise
 	default:
-		res.Label = "端口受限锥形"
+		return "端口受限锥形", "中", premise
 	}
-	return res, nil
 }
