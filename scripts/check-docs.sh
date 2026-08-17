@@ -92,7 +92,7 @@ while IFS=: read -r file line match; do
   if [[ ! -e "$(dirname "$file")/$target" ]]; then
     report "broken relative link at $file:$line -> $target"
   fi
-done < <(rg --no-heading --line-number --only-matching '\]\([^)]+\)' -g '*.md' . || true)
+done < <(grep -rnH --include='*.md' --exclude-dir=.git --exclude-dir=bin -oE '\]\([^)]+\)' . || true)
 
 while IFS= read -r missing_id; do
   [[ -z "$missing_id" ]] && continue
@@ -118,12 +118,12 @@ while IFS= read -r acceptance_id; do
     report "requirement references undeclared acceptance ID: $acceptance_id"
   fi
 done < <(
-  rg --no-filename --only-matching 'ACC-[A-Z0-9]+-[0-9]+' \
+  grep -h -oE 'ACC-[A-Z0-9]+-[0-9]+' \
     docs/requirements/functional.md docs/requirements/non-functional.md | sort -u
 )
 
 duplicate_ids="$(
-  rg --no-filename '^#{2,6} (FR|NFR|ACC|THR|RISK|ADR)-[A-Z0-9-]+' docs \
+  grep -rhE '^#{2,6} (FR|NFR|ACC|THR|RISK|ADR)-[A-Z0-9-]+' docs \
     | sed -E 's/^#+ ([^：: ]+).*/\1/' | sort | uniq -d
 )"
 if [[ -n "$duplicate_ids" ]]; then
