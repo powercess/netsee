@@ -1,0 +1,19 @@
+# 构建产物
+/bin/
+/netsee
+/probe
+*.exe
+*.test
+
+# 测试输出
+*.out
+coverage.*
+
+# 环境与密钥
+.env
+.env.*
+
+# 编辑器 / 系统
+.idea/
+.vscode/
+.DS_Store
