@@ -155,3 +155,20 @@ func TestDirectDegradesOnLoopback(t *testing.T) {
 		t.Error("expected an explicit direct-unavailable warning note")
 	}
 }
+
+// TestProbeUnreachableFailsFast verifies ACC-P4-003: an unreachable probe
+// must fail clearly within 60s (port 1 is closed → connection refused).
+func TestProbeUnreachableFailsFast(t *testing.T) {
+	cfg := testConfig("http://127.0.0.1:1")
+	started := time.Now()
+	_, err := cfg.Run(context.Background())
+	if err == nil {
+		t.Fatal("expected an error for an unreachable probe")
+	}
+	if d := time.Since(started); d > 60*time.Second {
+		t.Errorf("unreachable probe took %v, want <= 60s", d)
+	}
+	if !strings.Contains(err.Error(), "probe /api/info") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}

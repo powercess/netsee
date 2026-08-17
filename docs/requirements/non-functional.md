@@ -16,12 +16,12 @@ references:
 直接依赖只允许 `golang.org/x/net` 与 `golang.org/x/sys`，其余全部标准库。
 
 ### NFR-BUILD-001：单二进制跨平台
-状态：Accepted
+状态：Implemented
 验收：ACC-P5-002
 客户端与探针各自为单二进制；构建矩阵覆盖 linux/darwin/windows × amd64/arm64。
 
 ### NFR-PERF-001：单次测量耗时边界
-状态：Accepted
+状态：Implemented
 验收：ACC-P4-003
 正常路径单次全流程测量 ≤30s；探针不可达等故障路径 ≤60s 内明确失败。
 
