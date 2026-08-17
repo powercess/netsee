@@ -1,3 +1,12 @@
+---
+status: Accepted
+owners: NetSee maintainers
+last_reviewed: 2026-08-17
+applies_to: release evidence
+references:
+  - ../../CHANGELOG.md
+---
+
 # NetSee v0.1.0
 
 网络暴露面检测工具首个版本：客户端本地采集 + 自建探针（VPS）远端观测点。
@@ -10,13 +19,13 @@
 - **报告** `internal/report`：三层视角 + 观测点标注、诚实上下文固定行、事实先于判定、文本/JSON 同构
 - **治理**：MIT 许可、文档约束、CI（含 6 组合跨平台构建矩阵）、端到端与 VPS 冒烟脚本
 
-完整变更见 [CHANGELOG.md](CHANGELOG.md)。
+完整变更见 [CHANGELOG.md](../../CHANGELOG.md)。
 
 ## 兼容性
 
 - 探针协议版本 1（`/api/info.protocol_version`）
 - 探针默认端口 8080（HTTP）/ 8443（TLS 嗅探）/ 8444（UDP）/ 8445（NAT）
-- 协议兼容规则见 `docs/protocol/probe.md`
+- 协议兼容规则见 [探针协议](../protocol/probe.md)
 
 ## SBOM（依赖）
 
@@ -35,4 +44,4 @@
 - 运行时实测仅 **Linux**；darwin/windows 编译通过但未运行
 - `second-ip` 异 IP 回包路径（完整 RFC 5780 分类）需第二公网 IP
 - `--direct` 真实直连对比需 TUN 代理环境
-- 探针端口公网开放（无鉴权；按设计零落盘、会话内存 TTL）；生产部署建议防火墙收口（`docs/operations/probe.md`）
+- 探针端口公网开放（无鉴权；按设计零落盘、会话内存 TTL）；生产部署建议防火墙收口（[探针运维](../operations/probe.md)）
