@@ -61,62 +61,62 @@ HTTP 走 `X-Netsee-Session` header，TCP/UDP 走首条 JSON 载荷，TLS 走 SNI
 ## 客户端（本地采集与判定）
 
 ### FR-CLIENT-001：本地接口/路由/MTU/DNS 采集
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-001
 采集默认路由、出口接口、MTU、resolv.conf 解析器配置。
 
 ### FR-CLIENT-002：NAT 类型测试
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-002
 多 socket 映射稳定性 + 端口/IP 过滤测试，输出原始事实序列与判定标签。
 
 ### FR-CLIENT-003：对称映射检测
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-002
 同 socket 发往不同目标端口，观测源端口是否变化。
 
 ### FR-CLIENT-004：出站端口连通性
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-006
 客户端尝试 + 探针回报比对，防误判。
 
 ### FR-CLIENT-005：PMTU 探测
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-003
 Linux `IP_PMTUDISC_DO` 递增载荷探测路径 MTU 与 PMTU 黑洞。
 
 ### FR-CLIENT-006：DNS 劫持/分流检测
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-004
 系统解析器 vs dns.google DoH 对比解析结果。
 
 ### FR-CLIENT-007：IP 信誉查询
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-007
 ip-api 查询 ASN/ISP/机房/代理归属；可选 `IPINFO_TOKEN` 增强；令牌缺失时降级不崩溃。
 
 ### FR-CLIENT-008：TUN 识别
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-005
 默认路由出口接口名（`tun*`/`utun*`/`wg*`）→ 标记"流量经 TUN 接管"。
 
 ### FR-CLIENT-009：fake-ip 识别与劫持误报抑制
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-004
 resolv.conf 指向 `198.18.0.0/15` 或解析返回该段 → 抑制 DNS 劫持误报，改提示"DNS 被代理接管"。
 
 ### FR-CLIENT-010：代理程序指纹推断
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-005
 探针观测与已知代理栈特征比对（Go 运行时栈 + 特定 TLS 指纹 ≈ clash 等）；未匹配时只标"代理出口"不点名。
 
 ### FR-CLIENT-011：UDP 归因
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-008
 TCP 通但 UDP 不通时，先排除"TUN 不转发 UDP"再下"端口封锁"结论。
 
 ### FR-CLIENT-012：--direct 双栏对比
-状态：Accepted
+状态：Implemented
 验收：ACC-P2-005
 探针 IP 加直连路由绕过 TUN，输出直连 vs 代理出口双栏；需 root，路由守卫覆盖时明确提示失败。
 

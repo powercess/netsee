@@ -92,4 +92,5 @@ type Info struct {
 	ExtraPorts      []int  `json:"extra_ports"`
 	SecondIP        bool   `json:"second_ip"`
 	SecondIPAddr    string `json:"second_ip_addr,omitempty"`
+	MaxUDPPMTU      int    `json:"max_udp_pmtu"`
 }

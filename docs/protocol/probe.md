@@ -33,14 +33,16 @@ canonical 定义。客户端与探针不得各自维护漂移类型；字段变�
 
 - `echo` / `reach` / `pmtu`：探针从**同端口**原样回包。
 - `nat`：探针从 NAT 端口回包；`-second-ip` 启用时从第二 IP 回包，供 RFC 5780 分类。
-- 载荷超过 `-max-udp`（默认 2048 字节）静默丢弃。
+- `pmtu` 载荷允许更大的 `data` 字符串字段（客户端用其填充探测字节），上限 `-max-udp-pmtu`（默认 9000）；其余 kind 上限 `-max-udp`（默认 2048），超限静默丢弃。
+- `reply_from` 相对到达端口：同端口回包 `same`，异端口 `other-port`，异 IP `other-ip`。
+- **NAT 端口也接收并记录入站 datagram**（`dst_port`= NAT 端口）：客户端据此比较同一 socket 发往不同目标端口时探针观测到的源端口（对称映射检测）。
 - 未知 kind / 非法 JSON / 非法会话：不回复、不记录。
 
 ## HTTP API
 
 ### GET /api/info
 
-端口自发现响应（`proto.Info`）：HTTP/TLS/UDP/NAT 监听端口、额外端口、`second_ip` 可用状态与协议版本。客户端据此零配置发起测量。协议版本不匹配时客户端必须明确提示。
+端口自发现响应（`proto.Info`）：HTTP/TLS/UDP/NAT 监听端口、额外端口、`second_ip` 可用状态、`max_udp_pmtu` 载荷上限与协议版本。客户端据此零配置发起测量。协议版本不匹配时客户端必须明确提示。
 
 ### GET /api/session/{id}
 
