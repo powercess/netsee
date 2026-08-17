@@ -41,22 +41,34 @@ func (s *Server) serveUDPLoop(ln *net.UDPConn, r *udpReader) {
 	}
 }
 
-// handleUDPArrival processes one datagram. The reply source depends on
-// kind: echo/reach/pmtu reply from the arrival socket (same port), nat
-// replies from the NAT socket (different port, or different IP when
-// -second-ip is set). reply_from is relative to the arrival port.
-func (s *Server) handleUDPArrival(ln *net.UDPConn, payload []byte, src *net.UDPAddr, ttl int) {
+// parseUDPPayload validates and parses a UDP measurement payload.
+// ok is true only when the JSON is valid and the session ID is valid;
+// the kind is validated by the caller's switch (unknown kinds are
+// dropped, not recorded).
+func parseUDPPayload(payload []byte) (session, kind string, ok bool) {
 	var m struct {
 		Session string `json:"session"`
 		Kind    string `json:"kind"`
 	}
 	if err := json.Unmarshal(payload, &m); err != nil || !proto.ValidSessionID(m.Session) {
+		return "", "", false
+	}
+	return m.Session, m.Kind, true
+}
+
+// handleUDPArrival processes one datagram. The reply source depends on
+// kind: echo/reach/pmtu reply from the arrival socket (same port), nat
+// replies from the NAT socket (different port, or different IP when
+// -second-ip is set). reply_from is relative to the arrival port.
+func (s *Server) handleUDPArrival(ln *net.UDPConn, payload []byte, src *net.UDPAddr, ttl int) {
+	session, kind, ok := parseUDPPayload(payload)
+	if !ok {
 		return
 	}
 
 	arrivalPort := ln.LocalAddr().(*net.UDPAddr).Port
 	max := s.cfg.MaxUDP
-	if proto.UDPKind(m.Kind) == proto.UDPPMTU {
+	if proto.UDPKind(kind) == proto.UDPPMTU {
 		max = s.cfg.MaxUDPPMTU
 	}
 	if len(payload) > max {
@@ -65,7 +77,7 @@ func (s *Server) handleUDPArrival(ln *net.UDPConn, payload []byte, src *net.UDPA
 
 	var replier *net.UDPConn
 	var replyFrom string
-	switch proto.UDPKind(m.Kind) {
+	switch proto.UDPKind(kind) {
 	case proto.UDPEcho, proto.UDPReach, proto.UDPPMTU:
 		replier, replyFrom = ln, "same"
 	case proto.UDPNat:
@@ -82,7 +94,7 @@ func (s *Server) handleUDPArrival(ln *net.UDPConn, payload []byte, src *net.UDPA
 		return
 	}
 
-	s.recordUDP(m.Session, src, ttl, m.Kind, replyFrom, len(payload), arrivalPort)
+	s.recordUDP(session, src, ttl, kind, replyFrom, len(payload), arrivalPort)
 	_, _ = replier.WriteToUDP(payload, src)
 }
 

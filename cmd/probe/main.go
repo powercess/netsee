@@ -6,6 +6,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -15,10 +16,12 @@ import (
 	"time"
 
 	"netsee/internal/probe"
+	"netsee/internal/version"
 )
 
 func main() {
 	cfg := probe.Config{}
+	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.StringVar(&cfg.Bind, "bind", "0.0.0.0", "bind address")
 	flag.IntVar(&cfg.HTTPPort, "http-port", 8080, "HTTP echo + control API port")
 	flag.IntVar(&cfg.TLSPort, "tls-port", 8443, "TLS ClientHello sniff port (sniff-only, no handshake)")
@@ -32,6 +35,11 @@ func main() {
 	flag.IntVar(&cfg.MaxUDPPMTU, "max-udp-pmtu", 9000, "max UDP payload echoed for pmtu kind (bytes)")
 	flag.DurationVar(&cfg.ReadTimeout, "read-timeout", 10*time.Second, "per-connection read timeout")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("netsee-probe", version.Version)
+		return
+	}
 
 	if *extra != "" {
 		for _, p := range strings.Split(*extra, ",") {
