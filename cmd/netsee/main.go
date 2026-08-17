@@ -15,6 +15,7 @@ import (
 
 	"netsee/internal/client"
 	"netsee/internal/report"
+	"netsee/internal/version"
 )
 
 func main() {
@@ -26,8 +27,14 @@ func main() {
 		ipinfoToken = flag.String("ipinfo-token", "", "optional ipinfo.io access token")
 		direct      = flag.Bool("direct", false, "also measure via a direct route bypassing TUN (needs root)")
 		asJSON      = flag.Bool("json", false, "output the full structured result as JSON")
+		showVersion = flag.Bool("version", false, "print version and exit")
 	)
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("netsee", version.Version)
+		return
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

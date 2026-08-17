@@ -132,6 +132,9 @@ func parseClientHelloBody(body []byte) (*clientHello, int) {
 	}
 	pos += sidLen
 
+	if pos+2 > len(body) {
+		return nil, stateInvalid
+	}
 	cipherLen := int(binary.BigEndian.Uint16(body[pos:]))
 	pos += 2
 	if cipherLen < 2 || cipherLen%2 != 0 || pos+cipherLen > len(body) {
@@ -142,6 +145,9 @@ func parseClientHelloBody(body []byte) (*clientHello, int) {
 	}
 	pos += cipherLen
 
+	if pos >= len(body) {
+		return nil, stateInvalid
+	}
 	compLen := int(body[pos])
 	pos++
 	if compLen < 1 || pos+compLen > len(body) {
