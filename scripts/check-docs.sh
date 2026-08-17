@@ -114,7 +114,7 @@ done < <(
 
 while IFS= read -r acceptance_id; do
   [[ -z "$acceptance_id" ]] && continue
-  if ! rg -q "^### ${acceptance_id}：" docs/requirements/acceptance.md; then
+  if ! grep -q "^### ${acceptance_id}：" docs/requirements/acceptance.md; then
     report "requirement references undeclared acceptance ID: $acceptance_id"
   fi
 done < <(
